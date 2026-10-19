@@ -14,29 +14,34 @@ class RiskLevel(str, Enum):
 
 
 # Each rule is: (name, points, pattern to look for, reason to show the user)
+# Each rule is: (name, points, pattern to look for, reason to show the user)
 RULES = [
     ("URGENCY", 20,
-     r"urgent|immediately|right now|within \d+ (hours?|minutes?)|suspended|expire",
+     r"urgent|immediate(ly)?|right now|act now|within \d+\s*(hours?|minutes?|hrs?|mins?)|suspend(ed|ing)?|expir(e|es|ed|ing)|final (notice|warning)|last chance",
      "Creates false time pressure so you act before thinking."),
 
     ("OTP_REQUEST", 35,
-     r"\b(otp|one[- ]?time (code|password|pin)|verification code)\b",
+     r"\b(otp|one[- ]?time (code|password|pin)|verification code|security code|2fa)\b",
      "Asks for a one-time code. No real company ever asks you to share this."),
 
     ("CREDENTIAL_REQUEST", 30,
-     r"verify your (account|identity|password)|confirm your (login|details)",
-     "Asks you to verify your credentials - a classic phishing move."),
+     r"verify your (account|identity|password|details)|confirm your (login|details|identity|password)|(enter|update|provide|submit) your (details|information|password|card|bank|account|login|credentials)|log ?in to (verify|confirm|secure|your account)",
+     "Asks you to enter or verify your personal details - a classic phishing move."),
 
     ("PAYMENT_DEMAND", 30,
-     r"gift ?card|wire transfer|bitcoin|crypto|pay a (fee|fine)",
+     r"gift ?card|wire transfer|western union|moneygram|bitcoin|crypto|btc|usdt|pay (a |the )?(fee|fine|tax|penalty|charge)|processing fee",
      "Demands payment by untraceable methods scammers prefer."),
 
-    ("PRIZE_LURE", 20,
-     r"you (have |'ve )won|congratulations|claim your (prize|reward|refund)",
-     "Promises a prize or refund you never signed up for."),
+    ("PRIZE_LURE", 25,
+     r"\byou('?ve| have)? won\b|congratulations|claim your (prize|reward|refund|gift)|(won|win) (a |the )?(prize|lottery|contest|reward|gift|cash)|lottery|lucky draw|selected as (a |the )?winner|free (gift|prize|iphone|voucher|reward)|get (your )?reward",
+     "Promises a prize, reward, or winnings you never signed up for."),
+
+    ("CLICK_LURE", 15,
+     r"click (here|this|the link|below)|tap (here|this|the link)|open (this |the )?link|follow this link",
+     "Pushes you to click a link - a common way to reach a fake site."),
 
     ("LINK", 10,
-     r"http://|https://|www\.",
+     r"https?://|www\.",
      "Contains a link - be careful where it actually leads."),
 ]
 
@@ -61,14 +66,15 @@ def analyze(text):
 
 
 # This block runs only when you do `python detector.py` directly.
+# This block runs only when you do `python detector.py` directly.
 if __name__ == "__main__":
-    tests = [
-        "URGENT: your bank account will be suspended. Share the OTP to verify your identity now.",
-        "Hey, are we still on for lunch tomorrow at 1?",
-    ]
-    for t in tests:
-        level, score, reasons = analyze(t)
-        print(f"\nMessage: {t}")
+    print("ScamShield - type a message to check it (or 'quit' to exit).\n")
+    while True:
+        text = input("Message> ")
+        if text.strip().lower() in ("quit", "exit", "q"):
+            break
+        level, score, reasons = analyze(text)
         print(f"  -> {level.value} (score {score})")
         for r in reasons:
             print(f"     - {r}")
+        print()
