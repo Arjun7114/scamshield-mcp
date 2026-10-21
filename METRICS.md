@@ -1,16 +1,14 @@
 # ScamShield - Evaluation Results
 
-Labeled dataset: **38 messages** (20 scam, 18 legitimate).
+**Benchmark:** 56 messages (28 scam, 28 legitimate), a developer-authored set spanning subtle social-engineering, Hinglish (Romanized Hindi), and legitimate look-alikes (real OTPs, refunds, security notices). It is intentionally hard; a small labeled set like this indicates direction, not production performance.
 
 | Configuration | Accuracy | Precision | Recall | F1 |
 |---|---|---|---|---|
-| Rules + links only | 76.3% | 86.7% | 65.0% | 74.3% |
-| **Full hybrid (+ AI)** | **92.1%** | **87.0%** | **100.0%** | **93.0%** |
+| Rules + links only | 76.8% | 100.0% | 53.6% | 69.8% |
+| **Full hybrid (+ AI)** | **98.2%** | **96.6%** | **100.0%** | **98.2%** |
 
-The AI layer raised recall from 65.0% to 100.0%, catching scams the deterministic rules miss.
+The AI layer lifts recall from 53.6% to 100.0% by catching subtle and multilingual scams the deterministic rules miss. Hybrid confusion matrix: TP=28, FP=1, TN=27, FN=0.
 
-## Remaining errors (hybrid)
+## False alarms (false positives)
 
-- *false alarm*: Your OTP is 452198. Do not share it with anyone.
-- *false alarm*: Congratulations on your work anniversary! Have a great day.
-- *false alarm*: Your payment of Rs 299 to Spotify was successful.
+- Your OTP for login is 834512. Valid for 10 minutes. Do not share with anyone.
