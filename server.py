@@ -26,12 +26,14 @@ mcp = MCPServer(
         "and the warning signs found. Use whenever someone asks if a message is a scam."
     ),
 )
+
 def check_scam(message: str) -> dict:
     """Check `message` for scam/phishing risk and return a verdict for Alexa+ to read."""
     result = check_message(message)
     return {
         "risk_level": result["risk_level"],
         "warning_signs": result["reasons"],
+        "caught_by": result["caught_by"],
         "advice": _advice(result["risk_level"]),
     }
 
