@@ -18,6 +18,23 @@ Alexa+ is the MCP client. ScamShield exposes tools it calls over **Streamable HT
 
 ### Architecture — defense in depth
 
+```mermaid
+flowchart LR
+    U([User asks:<br/>is this a scam?]) --> W[Alexa+ Simulator<br/>web app, MCP client]
+    W -->|Streamable HTTP<br/>MCP 2025-11-25| S[ScamShield MCP Server<br/>check_scam, check_link]
+    S --> H
+
+    subgraph H [Hybrid detection engine]
+      direction TB
+      R[1. Rule engine<br/>~1 ms, auditable] --> L[2. Link analyzer<br/>phishing URLs]
+      L --> A[3. AI reasoning<br/>Llama 3 via Ollama]
+    end
+
+    H --> V([Verdict + advice<br/>SAFE / SUSPICIOUS / DANGEROUS<br/>spoken aloud])
+    V -.-> U
+```
+
+
 ScamShield decides in up to three layers, fastest first:
 
 1. **Rule engine** (`detector.py`) — auditable weighted patterns for urgency, OTP/credential requests, payment demands, prize lures, impersonation. Runs in <1 ms.
