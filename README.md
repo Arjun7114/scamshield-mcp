@@ -1,5 +1,7 @@
 # ScamShield 🛡️
 
+  ![ScamShield catching a subtle scam the rules can't — flagged by the AI layer](demo.png)
+
 **An Alexa+ MCP server that tells you whether a message or link is a scam — just by asking.**
 
 > *"Alexa, I got a text saying my bank account is locked and I need to verify my OTP — is this a scam?"*
@@ -7,6 +9,15 @@
 ScamShield is a self-hosted [Model Context Protocol](https://modelcontextprotocol.io) (MCP) server that analyzes suspicious messages and links for fraud and phishing, and delivers a clear verdict you can hear read aloud — built for the people most targeted by scams and least equipped to spot them.
 
 Built for the **Amazon Developer Hackathon** — Alexa+ track (simulated-experience path), with the Open Source mini-challenge.
+
+## Highlights
+
+- 🛡️ **Real MCP server** (Streamable HTTP, spec `2025-11-25`) — tools: `check_scam`, `check_link`
+- 🧠 **Hybrid engine** — deterministic rules + link analysis + local LLM (defense in depth)
+- 🔐 **Red-teamed** against 15 prompt-injection attacks — **0 bypasses**
+- 📊 **Measured honestly** — 98.2% F1 / 100% recall on a hard multilingual benchmark; **0.17% false alarms on 4,827 real messages**
+- 🗣️ **Voice Alexa+ experience** that speaks the verdict aloud
+- 🌐 **Multilingual** — handles Hinglish scams
 
 ## The problem
 
@@ -52,14 +63,20 @@ The fast layers return instantly and act as a safety net; the AI is consulted on
 
 ## Measured results
 
-Evaluated on a 38-message labeled dataset (`eval.py`) — 20 scam / 18 legitimate:
+## Measured results
+
+Evaluated on a hard 56-message labeled benchmark (`eval.py`) — subtle social-engineering, Hinglish, and legitimate look-alikes (28 scam / 28 legitimate):
 
 | Configuration | Accuracy | Precision | Recall | F1 |
 |---|---|---|---|---|
-| Rules + links only | 76.3% | 86.7% | 65.0% | 74.3% |
-| **Full hybrid (+ AI)** | **92.1%** | **87.0%** | **100.0%** | **93.0%** |
+| Rules + links only | 76.8% | 100.0% | 53.6% | 69.8% |
+| **Full hybrid (+ AI)** | **98.2%** | **96.6%** | **100.0%** | **98.2%** |
 
-The AI layer lifts recall from 65% → **100%** (no scam missed on the test set). Precision is 87% — ScamShield deliberately errs toward warning, since a false alarm is far cheaper than a missed scam. Full breakdown in [METRICS.md](METRICS.md).
+The AI layer lifts recall from 54% → **100%**, catching subtle and multilingual scams the rules miss.
+
+**Red-teamed:** 15 prompt-injection attacks that try to make the AI clear a scam — **0 bypasses** (`redteam.py`).
+
+**Real-data validation:** on the public UCI SMS corpus (5,574 real messages), the fast layer raised only **0.17% false alarms across 4,827 genuine messages**. Full breakdown and the honest precision/recall trade-off in [METRICS.md](METRICS.md).
 
 ## Run it locally
 
