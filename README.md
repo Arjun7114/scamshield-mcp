@@ -2,6 +2,10 @@
 
   ![ScamShield catching a subtle scam the rules can't — flagged by the AI layer](demo.png)
 
+## Demo
+
+▶️ **[Watch the 3-minute demo](https://youtu.be/WccpopB0TzE)**
+
 **An Alexa+ MCP server that tells you whether a message or link is a scam — just by asking.**
 
 > *"Alexa, I got a text saying my bank account is locked and I need to verify my OTP — is this a scam?"*
